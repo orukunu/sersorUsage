@@ -1,0 +1,72 @@
+package com.example.sersors;
+
+import android.app.Activity;
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.os.Bundle;
+import android.widget.TabHost;
+import android.widget.TextView;
+
+public class MainActivity extends Activity implements SensorEventListener{
+
+	private SensorManager sensorM;
+	private Sensor myGra;
+	float x,y,z ;
+	
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        sensorM = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        myGra = sensorM.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+    }
+
+	@Override
+	public void onSensorChanged(SensorEvent event) {
+		// TODO Auto-generated method stub
+		x = event.values[0];
+		y = event.values[1];
+		z = event.values[2];
+		String type = event.sensor.getName();
+		
+		TextView tvShow = (TextView) findViewById(R.id.tvShow);
+		TextView tvX = (TextView) findViewById(R.id.tvGra1);
+		TextView tvY = (TextView) findViewById(R.id.tvGra2);
+		TextView tvZ= (TextView) findViewById(R.id.tvGra3);
+		tvX.setText("X = "+ x);
+		tvY.setText("Y = "+ y);
+		tvZ.setText("Z = "+ z);
+	}
+
+	@Override
+	public void onAccuracyChanged(Sensor sensor, int accuracy) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		Thread timer = new Thread();
+		try {
+			timer.sleep(6000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		sensorM.registerListener(this, myGra, SensorManager.SENSOR_DELAY_NORMAL);
+	}
+
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		sensorM.unregisterListener(this);
+	}
+	
+	
+}
